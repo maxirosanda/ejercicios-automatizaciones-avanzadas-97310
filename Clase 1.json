@@ -158,7 +158,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        128,
+        176,
         192
       ],
       "id": "f22a2f47-15c6-415c-a651-dd8823b8d293",
@@ -179,7 +179,11 @@
         192
       ],
       "id": "684b2955-a8b3-4c6a-8606-5b22a8805e72",
-      "name": "AI Agent"
+      "name": "AI Agent",
+      "executeOnce": false,
+      "retryOnFail": true,
+      "maxTries": 5,
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -197,15 +201,100 @@
     },
     {
       "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"output\": {{ JSON.stringify($json.output) }}\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1072,
+        192
+      ],
+      "id": "d98cc241-fbb9-451d-91b5-2d9f0ad3893b",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 1040,
+        "width": 2032
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -448,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "37cf6e1c-bdcc-4921-8b8c-9065c3755278",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 992,
+        "width": 1712,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -448,
+        832
+      ],
+      "typeVersion": 1,
+      "id": "725423ff-393c-4b4c-943d-6f4f1a81251d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"output\": \"En este momento no puedo responderte\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1072,
+        416
+      ],
+      "id": "43b3a3f7-4f66-4a8e-a528-569c4a3c832e",
+      "name": "Respond to Webhook4"
+    },
+    {
+      "parameters": {
+        "sendTo": "maxi_rosanda@hotmail.com",
+        "subject": "Error en generacion de mensaje con la ia",
+        "emailType": "text",
+        "message": "={{ $('AI Agent').item.json.error }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        416
+      ],
+      "id": "d40c9116-7ff0-4d89-8ba5-8eae781e89d5",
+      "name": "Send a message",
+      "webhookId": "a9c171bf-42b2-4d66-8bcd-a8a735223f4a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OtGS67JkilbO4ge3",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        528,
-        448
+        560,
+        416
       ],
-      "id": "7e6228ee-8919-4829-8717-757522313e51",
+      "id": "5be6afbb-af40-4590-ab93-473ef166b1ff",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
@@ -216,18 +305,23 @@
     },
     {
       "parameters": {
-        "respondWith": "json",
-        "responseBody": "={\n  \"output\": {{ JSON.stringify($json.output) }}\n} ",
-        "options": {}
+        "operation": "get",
+        "documentURL": "1wdlQod7af2eFVk025qQRlbq2tCUWiYFbqP9QhfGJvOo"
       },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.5,
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
       "position": [
-        1040,
-        192
+        864,
+        448
       ],
-      "id": "d98cc241-fbb9-451d-91b5-2d9f0ad3893b",
-      "name": "Respond to Webhook3"
+      "id": "021989da-b572-4c98-8d3f-20f34dd6939e",
+      "name": "Get a document in Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "ZesePIcQR3biiqbT",
+          "name": "Google Docs account"
+        }
+      }
     }
   ],
   "pinData": {
@@ -323,6 +417,35 @@
         ]
       ]
     },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook4": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Google Gemini Chat Model": {
       "ai_languageModel": [
         [
@@ -334,12 +457,12 @@
         ]
       ]
     },
-    "AI Agent": {
-      "main": [
+    "Get a document in Google Docs": {
+      "ai_tool": [
         [
           {
-            "node": "Respond to Webhook3",
-            "type": "main",
+            "node": "AI Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
@@ -349,9 +472,10 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "availableInMCP": false
   },
-  "versionId": "327f33a5-97b2-4bcd-91f6-77737d2e5c8d",
+  "versionId": "1bd6ed8d-7852-444c-9e70-d0d10a781c0b",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "c52f7832265eaa231091dc408dc7f906166f0771ac3f68a27c6abe8564afe8b2"
